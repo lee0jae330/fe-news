@@ -13,17 +13,26 @@
         border: 1px solid var(--border-default);
         display: flex;
         flex:1 1 0;
+        flex-shrink: 0;
         gap:1rem;
+        height:49px;
+        min-width:0;
+        overflow: hidden;
         padding:1rem;
+        position: relative;
 
         &--newspaper {
             @include display-bold14;
             color: var(--text-strong);
+            text-wrap: nowrap;
         }
 
         &--title {
             @include available-medium14;
             color: var(--text-default);
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
         }
     }
 }
