@@ -1,6 +1,8 @@
-import {TodayDate } from './today-date';
-export const main = () =>{
+import { TodayDate } from './today-date';
+import { RollingSection } from './rolling-section';
+export const main = async () => {
   TodayDate();
+  await RollingSection();
 };
 
 main();
