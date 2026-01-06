@@ -1,0 +1,14 @@
+export const RIGHT_ARROW = `
+<svg
+                  width="24"
+                  height="40"
+                  viewBox="0 0 24 40"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M0.320312 40.384L24.3203 20.384L0.320312 0.384033"
+                    stroke="currentColor"
+                  />
+                </svg>
+`;
