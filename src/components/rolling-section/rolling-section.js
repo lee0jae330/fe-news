@@ -1,6 +1,6 @@
-import { getNewspaperForRolling } from '@/models';
-import { setIntervalForRolling } from '@/utils';
-import { rollingItemTemplate } from '@/constants';
+import { getNewspaperForRolling, setRollingAnimation } from '@/models';
+import { rollingItemTemplate, ROLLING_ANIMATION } from '@/constants';
+
 /**
  * @typedef {import('../../types').Newspaper} Newspaper
  */
@@ -19,66 +19,81 @@ export const RollingSection = async () => {
   let leftSectionNewspaperIndex = 0;
   let rightSectionNewspaperIndex = 0;
 
-  let leftCleanup = () => {};
-  let rightCleanup = () => {};
-  let timeoutId = null;
+  let leftFrameId = null;
+  let leftAnimation = null;
+  let leftCurrentShownIndex = leftSectionNewspaperIndex;
 
-  const startRolling = () => {
-    const { cleanup: firstCleanup } = setIntervalForRolling({
-      initialIndex: leftSectionNewspaperIndex,
-      newspaperList: leftSectionNewspaperList,
-      $newspaperItem: $firstNewspaperItem,
-      isRolling: true,
-    });
-    leftCleanup = firstCleanup;
+  let rightTimeout = null;
+  let rightFrameId = null;
+  let rightAnimation = null;
+  let rightCurrentShownIndex = rightSectionNewspaperIndex;
 
-    timeoutId = setTimeout(() => {
-      const { cleanup: secondCleanup } = setIntervalForRolling({
-        initialIndex: rightSectionNewspaperIndex,
-        newspaperList: rightSectionNewspaperList,
-        $newspaperItem: $secondNewspaperItem,
-        isRolling: true,
-      });
-      rightCleanup = secondCleanup;
-    }, 1000);
-  };
+  leftAnimation = setRollingAnimation({
+    shownIndex: leftSectionNewspaperIndex,
+    newspaperList: leftSectionNewspaperList,
+    $rollingItem: $firstNewspaperItem,
+    duration: ROLLING_ANIMATION.DURATION,
+  });
 
-  const stopRolling = () => {
-    leftCleanup();
-    rightCleanup();
-    if (timeoutId) {
-      clearTimeout(timeoutId);
-      timeoutId = null;
+  rightAnimation = setRollingAnimation({
+    shownIndex: rightSectionNewspaperIndex,
+    newspaperList: rightSectionNewspaperList,
+    $rollingItem: $secondNewspaperItem,
+    duration: ROLLING_ANIMATION.DURATION,
+  });
+
+  const $rollingSection = document.querySelector('.rolling-section');
+
+  $rollingSection.addEventListener('mouseover', (event) => {
+    if (event.target.classList.contains('rolling-section__item--title')) {
+      cancelAnimationFrame(leftFrameId);
+      leftCurrentShownIndex = leftAnimation.currentShownIndex;
+      leftAnimation.cleanup();
+
+      cancelAnimationFrame(rightFrameId);
+      rightCurrentShownIndex = rightAnimation.currentShownIndex;
+      rightAnimation.cleanup();
+
+      clearTimeout(rightTimeout);
+      rightTimeout = null;
     }
-  };
-
-  $firstNewspaperItem.addEventListener('mouseenter', () => {
-    stopRolling();
   });
 
-  $secondNewspaperItem.addEventListener('mouseenter', () => {
-    stopRolling();
+  $rollingSection.addEventListener('mouseout', (event) => {
+    if (event.target.classList.contains('rolling-section__item--title')) {
+      leftAnimation = setRollingAnimation({
+        shownIndex: leftCurrentShownIndex,
+        newspaperList: leftSectionNewspaperList,
+        $rollingItem: $firstNewspaperItem,
+        duration: ROLLING_ANIMATION.DURATION,
+      });
+      rightAnimation = setRollingAnimation({
+        shownIndex: rightCurrentShownIndex,
+        newspaperList: rightSectionNewspaperList,
+        $rollingItem: $secondNewspaperItem,
+        duration: ROLLING_ANIMATION.DURATION,
+      });
+      leftFrameId = requestAnimationFrame(leftAnimation.animation);
+      rightTimeout = setTimeout(() => {
+        rightFrameId = requestAnimationFrame(rightAnimation.animation);
+      }, ROLLING_ANIMATION.LFET_RIGHT_DELAY);
+    }
   });
 
-  $firstNewspaperItem.addEventListener('mouseleave', () => {
-    stopRolling();
-    startRolling();
-  });
+  const $rollingContentWrapper = document.createElement('ul');
+  $rollingContentWrapper.classList.add(
+    'rolling-section__item--content-wrapper',
+  );
 
-  $secondNewspaperItem.addEventListener('mouseleave', () => {
-    stopRolling();
-    startRolling();
-  });
+  let leftStartIndex = leftSectionNewspaperIndex;
+  let shownLeftIndex = leftStartIndex;
+  let hiddenLeftIndex = (leftStartIndex + 1) % leftSectionNewspaperList.length;
 
   $firstNewspaperItem.innerHTML = rollingItemTemplate({
-    shownNewspaperPress:
-      leftSectionNewspaperList[leftSectionNewspaperIndex].press,
-    shownNewspaperTitle:
-      leftSectionNewspaperList[leftSectionNewspaperIndex].mainTitle,
-    hiddenNewspaperPress:
-      leftSectionNewspaperList[leftSectionNewspaperIndex + 1].press,
-    hiddenNewspaperTitle:
-      leftSectionNewspaperList[leftSectionNewspaperIndex + 1].mainTitle,
+    shownNewspaperPress: leftSectionNewspaperList[shownLeftIndex].press,
+    shownNewspaperTitle: leftSectionNewspaperList[shownLeftIndex].mainTitle,
+    hiddenNewspaperPress: leftSectionNewspaperList[hiddenLeftIndex].press,
+    hiddenNewspaperTitle: leftSectionNewspaperList[hiddenLeftIndex].mainTitle,
   });
 
   $secondNewspaperItem.innerHTML = rollingItemTemplate({
@@ -92,5 +107,8 @@ export const RollingSection = async () => {
       rightSectionNewspaperList[rightSectionNewspaperIndex + 1].mainTitle,
   });
 
-  startRolling();
+  leftFrameId = requestAnimationFrame(leftAnimation.animation);
+  rightTimeout = setTimeout(() => {
+    rightFrameId = requestAnimationFrame(rightAnimation.animation);
+  }, ROLLING_ANIMATION.LFET_RIGHT_DELAY);
 };
