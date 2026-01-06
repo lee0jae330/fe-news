@@ -1,4 +1,4 @@
-import { RIGHT_ARROW } from '../svgs';
+import { RIGHT_ARROW } from '@/constants';
 
 /**
  * @typedef {Object} RightArrowButtonTemplateParams

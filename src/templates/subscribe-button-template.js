@@ -1,4 +1,4 @@
-import { PLUS } from '../svgs';
+import { PLUS } from '@/constants';
 
 export const subscribeButtonTemplate = () => {
   return `
