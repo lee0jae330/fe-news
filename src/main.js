@@ -1,8 +1,9 @@
-import { TodayDate, RollingSection } from './components';
+import { TodayDate, RollingSection, GridView } from '@/components';
 
-export const main = async () => {
+export const main = () => {
   TodayDate();
-  await RollingSection();
+  RollingSection();
+  GridView();
 };
 
 main();
