@@ -5,7 +5,12 @@ import {
   insertArrowButtons,
 } from '@/models';
 import { GRID_VIEW } from '@/constants';
-import { subscribeButtonTemplate, logoImageTemplate } from '@/templates';
+import {
+  subscribeButtonTemplate,
+  logoImageTemplate,
+  unsubscribeButtonTemplate,
+} from '@/templates';
+import { subscribedNewspaperStore } from '@/stores';
 
 export const GridView = async () => {
   const { newspaperList } = await getNewspaperForGrid();
@@ -23,16 +28,32 @@ export const GridView = async () => {
 
   $gridView.addEventListener('mouseover', (event) => {
     const $card = event.target.closest('.news-grid-view__card');
-    if (!$card || $card.contains(event.relatedTarget)) {
+    if (
+      !$card ||
+      $card.contains(event.relatedTarget) ||
+      event.relatedTarget.closest('.unsubscribe-button') ||
+      event.relatedTarget.closest('.subscribe-button')
+    ) {
       return;
     }
 
-    $card.innerHTML = subscribeButtonTemplate();
+    const isSubscribed = subscribedNewspaperStore.isSubscribed(
+      newspaperList[$card.getAttribute('data-index')].press,
+    );
+
+    $card.innerHTML = isSubscribed
+      ? unsubscribeButtonTemplate()
+      : subscribeButtonTemplate();
   });
 
   $gridView.addEventListener('mouseout', (event) => {
     const $card = event.target.closest('.news-grid-view__card');
-    if (!$card || $card.contains(event.relatedTarget)) {
+    if (
+      !$card ||
+      $card.contains(event.relatedTarget) ||
+      event.target.closest('.unsubscribe-button') ||
+      event.target.closest('.subscribe-button')
+    ) {
       return;
     }
     const index = $card.getAttribute('data-index');
@@ -73,6 +94,20 @@ export const GridView = async () => {
         leftButtonClassName: LEFT_BUTTON_CLASS_NAME,
         rightButtonClassName: RIGHT_BUTTON_CLASS_NAME,
       });
+    } else if (event.target.closest('.subscribe-button')) {
+      const $card = event.target.closest('.news-grid-view__card');
+      const newspaperIndex = $card.getAttribute('data-index');
+      subscribedNewspaperStore.subscribeNewspaper(
+        newspaperList[newspaperIndex],
+      );
+      $card.innerHTML = unsubscribeButtonTemplate();
+    } else if (event.target.closest('.unsubscribe-button')) {
+      const $card = event.target.closest('.news-grid-view__card');
+      const newspaperIndex = $card.getAttribute('data-index');
+      subscribedNewspaperStore.unsubscribeNewspaper(
+        newspaperList[newspaperIndex].press,
+      );
+      $card.innerHTML = subscribeButtonTemplate();
     }
   });
 
