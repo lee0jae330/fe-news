@@ -2,7 +2,7 @@
 @use '@/styles/typography.scss' as *;  
 
 .news-grid-view {
-  border: 1px solid var(--border-default);
+    border: 1px solid var(--border-default);
         border-bottom: none;
         border-right: none;
         display: grid;
@@ -10,6 +10,10 @@
         grid-template-rows: repeat(4, 1fr);
         height: 24.25rem;
         width: 100%;
+
+        &__wrapper {
+            position: relative;
+        }
 
         &__card {
             align-items: center;
@@ -24,5 +28,25 @@
             &--image {
                 height: 1.25rem;
             }
+
+            &:hover {
+                background-color: var(--surface-alt);
+            }
+        }
+
+        &__left-arrow,
+        &__right-arrow {
+            color: var(--border-bold);
+            position:absolute;
+            top:50%;
+            transform: translateY(-50%);
+        }
+        
+        &__left-arrow {
+            left: -3rem;
+        }
+
+        &__right-arrow {
+            right: -3rem;
         }
 }
