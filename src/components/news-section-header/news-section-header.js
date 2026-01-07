@@ -1,5 +1,5 @@
-import { newsSectionStore } from '@/stores';
 import { NEWS_SECTION_STATE } from '@/constants';
+import { newsSectionStore } from '@/stores';
 export const NewsSectionHeader = () => {
   const $newsSectionHeader = document.querySelector('.news-section__header');
 

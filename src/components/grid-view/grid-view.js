@@ -1,9 +1,10 @@
 import { NEWS_SECTION_STATE } from '@/constants';
-import { getNewspaperForGrid } from '@/models';
 import { Observer } from '@/libs';
+import { getNewspaperForGrid } from '@/models';
 import { newsSectionStore } from '@/stores';
-import { TotalGridView } from './total-grid-view';
+
 import { SubscribedGridView } from './subscribed-grid-view';
+import { TotalGridView } from './total-grid-view';
 
 /**
  * @returns {{cleanup: () => void}}

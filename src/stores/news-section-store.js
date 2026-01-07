@@ -1,5 +1,5 @@
-import { Subject } from '@/libs';
 import { NEWS_SECTION_STATE } from '@/constants';
+import { Subject } from '@/libs';
 /**
  * @typedef {import('../types').NewsSectionState} NewsSectionState
  * @type {NewsSectionState}

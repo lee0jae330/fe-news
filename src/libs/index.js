@@ -1,2 +1,2 @@
-export { Subject } from './subject';
 export { Observer } from './observer';
+export { Subject } from './subject';

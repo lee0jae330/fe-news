@@ -1,7 +1,7 @@
 import { subscribedNewspaperStore } from '@/stores';
 import {
-  unsubscribeButtonTemplate,
   subscribeButtonTemplate,
+  unsubscribeButtonTemplate,
 } from '@/templates';
 
 /**

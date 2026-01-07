@@ -1,8 +1,8 @@
 import { GRID_VIEW } from '@/constants';
 import {
-  gridViewEventHandler,
   createGridCardListHTML,
   getArrowButtonPosition,
+  gridViewEventHandler,
   insertArrowButtons,
   totalGridViewEventHandler,
 } from '@/models';

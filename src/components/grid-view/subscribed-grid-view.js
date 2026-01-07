@@ -1,12 +1,12 @@
 import { GRID_VIEW, NEWS_SECTION_STATE } from '@/constants';
+import { Observer } from '@/libs';
 import {
-  gridViewEventHandler,
   createGridCardListHTML,
-  insertArrowButtons,
   getArrowButtonPosition,
+  gridViewEventHandler,
+  insertArrowButtons,
   subscribedGridViewEventHandler,
 } from '@/models';
-import { Observer } from '@/libs';
 import { newsSectionStore, subscribedNewspaperStore } from '@/stores';
 
 /**

@@ -1,5 +1,5 @@
-import { NUMBER_OF_NEWSPAPER, GRID_VIEW } from '@/constants';
 import { fetchNewspaper } from '@/apis';
+import { GRID_VIEW, NUMBER_OF_NEWSPAPER } from '@/constants';
 import { getRandomNumberList } from '@/utils';
 
 /**

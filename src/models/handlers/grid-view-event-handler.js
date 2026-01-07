@@ -1,13 +1,14 @@
+import { GRID_VIEW } from '@/constants';
 import { subscribedNewspaperStore } from '@/stores';
 import {
-  unsubscribeButtonTemplate,
-  subscribeButtonTemplate,
   logoImageTemplate,
+  subscribeButtonTemplate,
+  unsubscribeButtonTemplate,
 } from '@/templates';
+
 import { createGridCardListHTML } from '../create-grid-card-list-html';
-import { insertArrowButtons } from '../insert-arrow-buttons';
 import { getArrowButtonPosition } from '../get-arrow-buttons-position';
-import { GRID_VIEW } from '@/constants';
+import { insertArrowButtons } from '../insert-arrow-buttons';
 
 /**
  * @typedef {import('../../types').Newspaper} Newspaper
