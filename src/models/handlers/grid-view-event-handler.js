@@ -15,31 +15,44 @@ import { GRID_VIEW } from '@/constants';
  * @typedef {Object} GridViewEventHandlerParams
  * @property {Newspaper[]} newspaperList
  * @property {number} initialPage
+ * @property {boolean} isSubscribed
  *
  * @param {GridViewEventHandlerParams} gridViewEventHandlerParams
  * @returns
  */
-export const gridViewEventHandler = ({ newspaperList, initialPage }) => {
+export const gridViewEventHandler = ({
+  newspaperList,
+  initialPage,
+  isSubscribed = false,
+}) => {
   const { PAGE_SIZE, LEFT_BUTTON_CLASS_NAME, RIGHT_BUTTON_CLASS_NAME } =
     GRID_VIEW;
 
-  const totalPage = Math.ceil(newspaperList.length / PAGE_SIZE) - 1;
+  const getCurrentNewspaperList = () => {
+    return isSubscribed
+      ? subscribedNewspaperStore.getSubscribedNewspaperList()
+      : newspaperList;
+  };
+
+  const totalPage = Math.ceil(getCurrentNewspaperList().length / PAGE_SIZE) - 1;
   let currentPage = initialPage;
   const $gridView = document.querySelector('.news-grid-view');
 
   const handleMouseOver = (event) => {
     const $card = event.target.closest('.news-grid-view__card');
+    const currentNewspaperList = getCurrentNewspaperList();
     if (
       !$card ||
       $card.contains(event.relatedTarget) ||
-      event.relatedTarget.closest('.unsubscribe-button') ||
-      event.relatedTarget.closest('.subscribe-button')
+      event.relatedTarget?.closest('.subscribe-button') ||
+      event.relatedTarget?.closest('.unsubscribe-button') ||
+      !currentNewspaperList[$card.getAttribute('data-index')]
     ) {
       return;
     }
 
     const isSubscribed = subscribedNewspaperStore.isSubscribed(
-      newspaperList[$card.getAttribute('data-index')].press,
+      currentNewspaperList[$card.getAttribute('data-index')].press,
     );
 
     $card.innerHTML = isSubscribed
@@ -49,66 +62,50 @@ export const gridViewEventHandler = ({ newspaperList, initialPage }) => {
 
   const handleMouseOut = (event) => {
     const $card = event.target.closest('.news-grid-view__card');
+    const currentNewspaperList = getCurrentNewspaperList();
     if (
       !$card ||
       $card.contains(event.relatedTarget) ||
-      event.target.closest('.unsubscribe-button') ||
-      event.target.closest('.subscribe-button')
+      event.relatedTarget?.closest('.subscribe-button') ||
+      event.relatedTarget?.closest('.unsubscribe-button')
     ) {
       return;
     }
-    const index = $card.getAttribute('data-index');
+
+    const newspaperIndex = $card.getAttribute('data-index');
+    if (!currentNewspaperList[newspaperIndex]) {
+      return;
+    }
     $card.innerHTML = logoImageTemplate({
-      logoUrl: newspaperList[index].logo,
+      logoUrl: currentNewspaperList[newspaperIndex]?.logo,
       className: 'news-grid-view__card--image',
+    });
+  };
+
+  const updateGrid = (currentPage) => {
+    const currentNewspaperList = getCurrentNewspaperList();
+    const gridCardListHTML = createGridCardListHTML({
+      newspaperList: currentNewspaperList,
+      currentPage,
+      pageSize: PAGE_SIZE,
+    });
+    $gridView.innerHTML = gridCardListHTML;
+
+    insertArrowButtons({
+      parentElement: $gridView,
+      position: getArrowButtonPosition(currentPage, totalPage),
+      leftButtonClassName: LEFT_BUTTON_CLASS_NAME,
+      rightButtonClassName: RIGHT_BUTTON_CLASS_NAME,
     });
   };
 
   const handleClick = (event) => {
     if (event.target.closest(`.${RIGHT_BUTTON_CLASS_NAME}`)) {
       currentPage++;
-      const gridCardListHTML = createGridCardListHTML({
-        newspaperList,
-        currentPage,
-        pageSize: PAGE_SIZE,
-      });
-      $gridView.innerHTML = gridCardListHTML;
-
-      insertArrowButtons({
-        parentElement: $gridView,
-        position: getArrowButtonPosition(currentPage, totalPage),
-        leftButtonClassName: LEFT_BUTTON_CLASS_NAME,
-        rightButtonClassName: RIGHT_BUTTON_CLASS_NAME,
-      });
+      updateGrid(currentPage);
     } else if (event.target.closest(`.${LEFT_BUTTON_CLASS_NAME}`)) {
       currentPage--;
-      const gridCardListHTML = createGridCardListHTML({
-        newspaperList,
-        currentPage,
-        pageSize: PAGE_SIZE,
-      });
-      $gridView.innerHTML = gridCardListHTML;
-
-      insertArrowButtons({
-        parentElement: $gridView,
-        position: getArrowButtonPosition(currentPage, totalPage),
-        leftButtonClassName: LEFT_BUTTON_CLASS_NAME,
-        rightButtonClassName: RIGHT_BUTTON_CLASS_NAME,
-      });
-    } else if (event.target.closest('.subscribe-button')) {
-      const $card = event.target.closest('.news-grid-view__card');
-      const newspaperIndex = $card.getAttribute('data-index');
-      subscribedNewspaperStore.subscribeNewspaper(
-        newspaperList[newspaperIndex],
-      );
-      $card.innerHTML = unsubscribeButtonTemplate();
-    } else if (event.target.closest('.unsubscribe-button')) {
-      const $card = event.target.closest('.news-grid-view__card');
-      const newspaperIndex = $card.getAttribute('data-index');
-      subscribedNewspaperStore.unsubscribeNewspaper(
-        newspaperList[newspaperIndex].press,
-      );
-      $card.innerHTML = subscribeButtonTemplate();
+      updateGrid(currentPage);
     }
   };
 
