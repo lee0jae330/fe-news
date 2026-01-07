@@ -1,4 +1,5 @@
 export { gridItemTemplate } from './grid-item-template.js';
+export { gridViewTemplate } from './grid-view-template.js';
 export { leftArrowButtonTemplate } from './left-arrow-button-template.js';
 export { logoImageTemplate } from './logo-image-template.js';
 export { rightArrowButtonTemplate } from './right-arrow-button-template.js';
