@@ -20,7 +20,7 @@ export const createGridCardListHTML = ({
     .map((_, index) => {
       const newspaperIndex = index + currentPage * pageSize;
       return gridItemTemplate({
-        logoUrl: newspaperList[newspaperIndex].logo,
+        logoUrl: newspaperList[newspaperIndex]?.logo,
         index: newspaperIndex,
       });
     })
