@@ -1,55 +1,44 @@
-import {
-  getNewspaperForGrid,
-  createGridCardListHTML,
-  getArrowButtonPosition,
-  insertArrowButtons,
-} from '@/models';
-import { GRID_VIEW } from '@/constants';
-import { gridViewEventHandler } from '@/models';
+import { NEWS_SECTION_STATE } from '@/constants';
+import { getNewspaperForGrid } from '@/models';
+import { Observer } from '@/libs';
+import { newsSectionStore } from '@/stores';
+import { TotalGridView } from './total-grid-view';
+import { SubscribedGridView } from './subscribed-grid-view';
 
+/**
+ * @returns {{cleanup: () => void}}
+ */
 export const GridView = async () => {
-  const { newspaperList } = await getNewspaperForGrid();
-  const {
-    PAGE_SIZE,
-    INITIAL_PAGE,
-    LEFT_BUTTON_CLASS_NAME,
-    RIGHT_BUTTON_CLASS_NAME,
-  } = GRID_VIEW;
+  let cleanupFunctions = null;
+  const { newspaperList: totalNewspaperList } = await getNewspaperForGrid();
 
-  const totalPage = Math.ceil(newspaperList.length / PAGE_SIZE) - 1;
-  let currentPage = INITIAL_PAGE;
+  const updateGridView = () => {
+    const { type, view } = newsSectionStore.getState();
+    if (view === NEWS_SECTION_STATE.VIEW.LIST) {
+      cleanupFunctions?.();
+      cleanupFunctions = null;
+      return;
+    }
 
-  const $gridView = document.querySelector('.news-grid-view');
+    cleanupFunctions?.();
+    cleanupFunctions = null;
 
-  const { handleMouseOver, handleMouseOut, handleClick } = gridViewEventHandler(
-    {
-      newspaperList,
-      initialPage: currentPage,
-    },
-  );
-
-  $gridView.addEventListener('mouseover', handleMouseOver);
-  $gridView.addEventListener('mouseout', handleMouseOut);
-  $gridView.addEventListener('click', handleClick);
-
-  const gridCardListHTML = createGridCardListHTML({
-    newspaperList,
-    currentPage,
-    pageSize: PAGE_SIZE,
-  });
-  $gridView.innerHTML = gridCardListHTML;
-  insertArrowButtons({
-    parentElement: $gridView,
-    position: getArrowButtonPosition(currentPage, totalPage),
-    leftButtonClassName: LEFT_BUTTON_CLASS_NAME,
-    rightButtonClassName: RIGHT_BUTTON_CLASS_NAME,
-  });
-
-  return {
-    cleanup: () => {
-      $gridView.removeEventListener('mouseover', handleMouseOver);
-      $gridView.removeEventListener('mouseout', handleMouseOut);
-      $gridView.removeEventListener('click', handleClick);
-    },
+    if (type === NEWS_SECTION_STATE.TYPE.TOTAL) {
+      const { cleanup: cleanupTotalGridView } = TotalGridView({
+        newspaperList: totalNewspaperList,
+      });
+      cleanupFunctions = cleanupTotalGridView;
+    } else {
+      const { cleanup: cleanupSubscribedGridView } = SubscribedGridView();
+      cleanupFunctions = cleanupSubscribedGridView;
+    }
   };
+
+  const observer = new Observer(updateGridView);
+  newsSectionStore.subscribe(observer);
+
+  const { cleanup: cleanupTotalGridView } = TotalGridView({
+    newspaperList: totalNewspaperList,
+  });
+  cleanupFunctions = cleanupTotalGridView;
 };
