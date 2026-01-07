@@ -3,3 +3,4 @@ export { NUMBER_OF_NEWSPAPER } from './number-of-newspaper.js';
 export { ROLLING_ANIMATION } from './rolling-animation.js';
 export { GRID_VIEW } from './grid-view.js';
 export { LEFT_ARROW, RIGHT_ARROW, PLUS, X } from './svgs';
+export { NEWS_SECTION_STATE } from './news-section-state.js';
