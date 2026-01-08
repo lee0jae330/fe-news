@@ -6,6 +6,11 @@ export {
   gridViewEventHandler,
   subscribedGridViewEventHandler,
   totalGridViewEventHandler,
+  unsubscriptionModalEventHandler,
 } from './handlers';
 export { insertArrowButtons } from './insert-arrow-buttons';
-export { newsSectionStore, subscribedNewspaperStore } from './stores';
+export {
+  newsSectionStore,
+  subscribedNewspaperStore,
+  unsubscriptionModalStore,
+} from './stores';
