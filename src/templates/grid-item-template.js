@@ -12,8 +12,8 @@ import { logoImageTemplate } from './logo-image-template.js';
  */
 export const gridItemTemplate = ({ logoUrl, index }) => {
   return `
-  <div class="news-grid-view__card" data-index="${index}">
+  <li class="news-grid-view__card" data-index="${index}">
     ${logoUrl ? logoImageTemplate({ logoUrl, className: 'news-grid-view__card--image' }) : ''}
-  </div>
+  </li>
   `;
 };
