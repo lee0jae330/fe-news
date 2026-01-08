@@ -8,6 +8,10 @@
         height:24.25rem;
         width: 100%;
 
+        &__wrapper {
+          position: relative;
+        }
+
         &__category-tabs {
             background-color: var(--surface-alt);
             border-bottom: 1px solid var(--border-default);
@@ -16,7 +20,6 @@
             width: 100%;
 
             &__item {
-                &__button {
                     @include available-medium14;
                     align-items: center;
                     color: var(--text-weak);
@@ -49,7 +52,6 @@
                             & > span:last-child {
                                 color: var(--text-white-weak);
                             }
-                        }
                     }
                 }
             }
@@ -140,6 +142,23 @@
         }
       }
     }
+
+  }
+
+  &__left-arrow,
+  &__right-arrow {
+    color: var(--border-bold);
+    position:absolute;
+    top:50%;
+    transform: translateY(-50%);
+  }
+  
+  &__left-arrow {
+    left: -3rem;
+  }
+
+  &__right-arrow {
+    right: -3rem;
   }
 }
 
