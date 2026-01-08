@@ -1,6 +1,7 @@
 export { createGridCardListHTML } from './create-grid-card-list-html';
 export { getArrowButtonPosition } from './get-arrow-buttons-position';
 export { getNewspaperForGrid } from './get-newspaper-for-grid';
+export { getNewspaperForList } from './get-newspaper-for-list';
 export { getNewspaperForRolling } from './get-newspaper-for-rolling';
 export {
   gridViewEventHandler,
@@ -11,6 +12,7 @@ export {
 export { insertArrowButtons } from './insert-arrow-buttons';
 export {
   gridViewStore,
+  listViewStore,
   newsSectionStore,
   subscribedNewspaperStore,
   unsubscriptionModalStore,
