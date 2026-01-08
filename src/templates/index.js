@@ -3,8 +3,17 @@ export {
   rightArrowButtonTemplate,
 } from './arrow-button';
 export { gridItemTemplate, gridViewTemplate } from './grid-view';
-export { listViewTemplate } from './list-view';
-export { logoImageTemplate } from './logo-image-template';
+export {
+  listViewCategoryTabPageIndicatorTemplate,
+  listViewNewsSectionAdditionalArticlesListTemplate,
+  listViewNewsSectionAdditionalArticleTemplate,
+  listViewNewsSectionHeaderTemplate,
+  listViewNewsSectionMainArticleTemplate,
+  listViewNewsSectionMainTemplate,
+  listViewNewsSectionTemplate,
+  listViewTemplate,
+} from './list-view';
+export { logoImageTemplate } from './press-logo-image';
 export { rollingItemTemplate } from './rolling-item';
 export {
   subscribeButtonTemplate,
