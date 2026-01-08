@@ -4,3 +4,4 @@ export { NEWS_SECTION_STATE } from './news-section-state.js';
 export { NUMBER_OF_NEWSPAPER } from './number-of-newspaper.js';
 export { ROLLING_ANIMATION } from './rolling-animation.js';
 export { LEFT_ARROW, PLUS, RIGHT_ARROW, X } from './svgs';
+export { UNSUBSCRIPTION_MODAL_INITIAL_STATE } from './unsubscription-modal-state.js';
