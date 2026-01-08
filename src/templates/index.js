@@ -6,3 +6,4 @@ export { rightArrowButtonTemplate } from './right-arrow-button-template.js';
 export { rollingItemTemplate } from './rolling-item-template.js';
 export { subscribeButtonTemplate } from './subscribe-button-template.js';
 export { unsubscribeButtonTemplate } from './unsubscribe-button-template.js';
+export { unsubscriptionModalTemplate } from './unsubscription-modal-template.js';
