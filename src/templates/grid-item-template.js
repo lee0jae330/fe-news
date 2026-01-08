@@ -4,7 +4,7 @@ import { logoImageTemplate } from './logo-image-template.js';
  * @typedef {import('../../types').Newspaper} Newspaper
  *
  * @typedef {Object} GridItemTemplateParams
- * @property {Newspaper['logo']} logoUrl
+ * @property {Newspaper['logo']| null} logoUrl
  * @property {number} index
  *
  * @param {GridItemTemplateParams} gridItemTemplateParams
@@ -13,7 +13,7 @@ import { logoImageTemplate } from './logo-image-template.js';
 export const gridItemTemplate = ({ logoUrl, index }) => {
   return `
   <div class="news-grid-view__card" data-index="${index}">
-    ${logoImageTemplate({ logoUrl, className: 'news-grid-view__card--image' })}
+    ${logoUrl ? logoImageTemplate({ logoUrl, className: 'news-grid-view__card--image' }) : ''}
   </div>
   `;
 };

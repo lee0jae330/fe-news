@@ -1,91 +1,77 @@
-import {
-  getNewspaperForGrid,
-  createGridCardListHTML,
-  getArrowButtonPosition,
-  insertArrowButtons,
-} from '@/models';
-import { GRID_VIEW } from '@/constants';
-import { subscribeButtonTemplate, logoImageTemplate } from '@/templates';
+import { NEWS_SECTION_STATE } from '@/constants';
+import { Observer } from '@/libs';
+import { newsSectionStore } from '@/stores';
+import { gridViewTemplate } from '@/templates';
 
-export const GridView = async () => {
-  const { newspaperList } = await getNewspaperForGrid();
-  const {
-    PAGE_SIZE,
-    INITIAL_PAGE,
-    LEFT_BUTTON_CLASS_NAME,
-    RIGHT_BUTTON_CLASS_NAME,
-  } = GRID_VIEW;
+import { SubscribedGridView } from './subscribed-grid-view';
+import { TotalGridView } from './total-grid-view';
 
-  const totalPage = Math.ceil(newspaperList.length / PAGE_SIZE) - 1;
-  let currentPage = INITIAL_PAGE;
+/**
+ * @typedef {import('../../types').Newspaper} Newspaper
+ *
+ * @typedef {Object} GridViewParams
+ * @property {Newspaper[]} newspaperList
+ *
+ * @param {GridViewParams} gridViewParams
+ * @returns {{cleanup: () => void}}
+ */
+export const GridView = async ({ newspaperList }) => {
+  let cleanupFunctions = null;
 
-  const $gridView = document.querySelector('.news-grid-view');
+  const createGridView = () => {
+    const $newsSection = document.querySelector('.news-section');
+    $newsSection.insertAdjacentHTML('beforeend', gridViewTemplate());
+  };
 
-  $gridView.addEventListener('mouseover', (event) => {
-    const $card = event.target.closest('.news-grid-view__card');
-    if (!$card || $card.contains(event.relatedTarget)) {
+  const updateGridView = () => {
+    const { type, view } = newsSectionStore.getState();
+
+    cleanupFunctions?.();
+    cleanupFunctions = null;
+
+    if (view === NEWS_SECTION_STATE.VIEW.LIST) {
       return;
     }
 
-    $card.innerHTML = subscribeButtonTemplate();
-  });
-
-  $gridView.addEventListener('mouseout', (event) => {
-    const $card = event.target.closest('.news-grid-view__card');
-    if (!$card || $card.contains(event.relatedTarget)) {
-      return;
+    if (type === NEWS_SECTION_STATE.TYPE.TOTAL) {
+      const { cleanup: cleanupTotalGridView } = TotalGridView({
+        newspaperList,
+      });
+      cleanupFunctions = cleanupTotalGridView;
+    } else {
+      const { cleanup: cleanupSubscribedGridView } = SubscribedGridView();
+      cleanupFunctions = cleanupSubscribedGridView;
     }
-    const index = $card.getAttribute('data-index');
-    $card.innerHTML = logoImageTemplate({
-      logoUrl: newspaperList[index].logo,
-      className: 'news-grid-view__card--image',
+  };
+
+  const observer = new Observer(updateGridView);
+  newsSectionStore.subscribe(observer);
+
+  createGridView();
+
+  if (newsSectionStore.getState().type === NEWS_SECTION_STATE.TYPE.TOTAL) {
+    const { cleanup: cleanupTotalGridView } = TotalGridView({
+      newspaperList,
     });
-  });
+    cleanupFunctions = cleanupTotalGridView;
+  } else {
+    const { cleanup: cleanupSubscribedGridView } = SubscribedGridView();
+    cleanupFunctions = cleanupSubscribedGridView;
+  }
 
-  $gridView.addEventListener('click', (event) => {
-    if (event.target.closest(`.${RIGHT_BUTTON_CLASS_NAME}`)) {
-      currentPage++;
-      const gridCardListHTML = createGridCardListHTML({
-        newspaperList,
-        currentPage,
-        pageSize: PAGE_SIZE,
-      });
-      $gridView.innerHTML = gridCardListHTML;
-
-      insertArrowButtons({
-        parentElement: $gridView,
-        position: getArrowButtonPosition(currentPage, totalPage),
-        leftButtonClassName: LEFT_BUTTON_CLASS_NAME,
-        rightButtonClassName: RIGHT_BUTTON_CLASS_NAME,
-      });
-    } else if (event.target.closest(`.${LEFT_BUTTON_CLASS_NAME}`)) {
-      currentPage--;
-      const gridCardListHTML = createGridCardListHTML({
-        newspaperList,
-        currentPage,
-        pageSize: PAGE_SIZE,
-      });
-      $gridView.innerHTML = gridCardListHTML;
-
-      insertArrowButtons({
-        parentElement: $gridView,
-        position: getArrowButtonPosition(currentPage, totalPage),
-        leftButtonClassName: LEFT_BUTTON_CLASS_NAME,
-        rightButtonClassName: RIGHT_BUTTON_CLASS_NAME,
-      });
-    }
-  });
-
-  const gridCardListHTML = createGridCardListHTML({
-    newspaperList,
-    currentPage,
-    pageSize: PAGE_SIZE,
-  });
-  $gridView.innerHTML = gridCardListHTML;
-  insertArrowButtons({
-    parentElement: $gridView,
-    position: getArrowButtonPosition(currentPage, totalPage),
-    leftButtonClassName: LEFT_BUTTON_CLASS_NAME,
-    rightButtonClassName: RIGHT_BUTTON_CLASS_NAME,
-  });
+  return {
+    cleanup: () => {
+      cleanupFunctions?.();
+      cleanupFunctions = null;
+      if (observer) {
+        newsSectionStore.unsubscribe(observer);
+      }
+      const $gridViewWrapper = document.querySelector(
+        '.news-grid-view__wrapper',
+      );
+      if ($gridViewWrapper) {
+        $gridViewWrapper.remove();
+      }
+    },
+  };
 };

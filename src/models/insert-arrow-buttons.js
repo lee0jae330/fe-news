@@ -16,6 +16,10 @@ export const insertArrowButtons = ({
   leftButtonClassName,
   rightButtonClassName,
 }) => {
+  if (position === 'none') {
+    return;
+  }
+
   if (position === 'left') {
     parentElement.insertAdjacentHTML(
       'beforeend',
