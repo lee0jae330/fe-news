@@ -10,6 +10,7 @@ export {
 } from './handlers';
 export { insertArrowButtons } from './insert-arrow-buttons';
 export {
+  gridViewStore,
   newsSectionStore,
   subscribedNewspaperStore,
   unsubscriptionModalStore,
