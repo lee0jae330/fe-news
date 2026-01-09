@@ -16,9 +16,7 @@
     "lint:style:fix": "stylelint \"**/*.{css,scss}\" --fix",
     "format": "prettier --write \"**/*.{js,jsx}\"",
     "format:fix": "prettier --write \"**/*.{js,jsx}\" --fix",
-    "prepare": "husky",
-    "predeploy": "npm run build",
-    "deploy": "gh-pages -d dist"
+    "prepare": "husky"
   },
   "repository": {
     "type": "git",
@@ -50,7 +48,6 @@
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-prettier": "^5.5.4",
     "eslint-plugin-simple-import-sort": "^12.1.1",
-    "gh-pages": "^6.3.0",
     "husky": "^9.1.7",
     "json-server": "^1.0.0-beta.3",
     "lint-staged": "^16.2.7",
